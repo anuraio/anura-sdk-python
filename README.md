@@ -4,24 +4,24 @@ The **Anura SDK for Python** makes it easy for developers to access Anura Direct
 
 ## Getting Started
 1. **Have an open active account with Anura**. You can see more about Anura's offerings [here.](https://www.anura.io/product#plans-pricing)
-2. **Minimum Requirements** - To use the SDK, you will need **Python >=3.7**.
+2. **Minimum Requirements** - To use the SDK, you will need **Python >=3.10**.
 3. **Install the SDK** - Using **pip** is the easiest and recommended way to install it. You can install it with the following command:
 ```sh
-pip install anura_sdk_python
+pip install anura
 ```
 Or, install from source with:
 ```sh
 git clone https://github.com/anuraio/anura-sdk-python.git
-cd anura_sdk_python
-python -m pip install -r requirements.txt
-python -m pip install -e .
+cd anura-sdk-python
+python3 -m pip install -r requirements.txt
+python3 -m pip install -e .
 ```
 4. View our [**Quick Examples**](#quick-examples) to immediately begin using the SDK!
 
 ## Quick Examples
 ### Create the Anura Direct Client
 ```python
-from anura_direct import AnuraDirect
+from anura.direct.client import AnuraDirect
 
 direct = AnuraDirect('your-instance-id-goes-here')
 ```
@@ -55,7 +55,7 @@ try:
         'visitors-app-package-id', # optional
         'visitors-device-id' # optional
     )
-    print('result: ' + result.result)
+    print('result: ' + str(result))
 except Exception as e:
     print(e)
 ```
@@ -66,12 +66,18 @@ import asyncio
 import aiohttp
 
 async def main():
-    direct = AnuraDirect('123456')
+    direct = AnuraDirect('your-instance-id')
 
     async with aiohttp.ClientSession() as session:
         try:
-            result = await direct.get_result_async(session, '127.0.0.1')
-            print('result: ' + result.result)
+            result = await direct.get_result_async(
+                session, # required
+                'visitors-ip-address', # required
+                'visitors-user-agent', # optional
+                'visitors-app-package-id', # optional
+                'visitors-device-id' # optional
+            )
+            print('result: ' + str(result))
         except Exception as e:
             print(e)
 
