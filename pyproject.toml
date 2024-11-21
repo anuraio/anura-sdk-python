@@ -1,12 +1,12 @@
 [project]
-name = "anura_sdk_python_anura"
+name = "anura"
 version = "0.0.1"
 authors = [
     { name="Xavier Mejia", email="geekpad@anura.io" }
 ]
 description = "Anura SDK for Python"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "requests",
     "aiohttp"
