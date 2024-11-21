@@ -1,8 +1,8 @@
 import requests
 import aiohttp
 import json
-from direct_result import DirectResult
-from anura_exceptions import AnuraException, AnuraClientException, AnuraServerException
+from anura.direct.result import DirectResult
+from anura.direct.exceptions import AnuraException, AnuraClientException, AnuraServerException
 from typing import Awaitable
 
 class AnuraDirect:
@@ -172,4 +172,3 @@ class AnuraDirect:
         
         additional_data_string = json.dumps(self.__additional_data)
         return additional_data_string
-    
