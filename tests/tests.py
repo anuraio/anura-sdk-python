@@ -1,8 +1,8 @@
 import unittest
 import sys
-sys.path.append('../anura_direct')
-from anura_direct import AnuraDirect
-from anura_exceptions import AnuraClientException
+sys.path.append('../anura/direct')
+from anura.direct.client import AnuraDirect
+from anura.direct.exceptions import AnuraClientException
 
 class TestSDK(unittest.TestCase):
 
