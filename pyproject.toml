@@ -1,6 +1,6 @@
 [project]
 name = "anura"
-version = "0.0.1"
+version = "1.0.0"
 authors = [
     { name="Xavier Mejia", email="geekpad@anura.io" }
 ]
