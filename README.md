@@ -9,13 +9,24 @@ The **Anura SDK for Python** makes it easy for developers to access Anura Direct
 ```sh
 pip install anura
 ```
-Or, install from source with:
+Or, install from source by using one of the following examples according to your operating system:
+
+Linux/Mac:
 ```sh
 git clone https://github.com/anuraio/anura-sdk-python.git
 cd anura-sdk-python
 python3 -m pip install -r requirements.txt
 python3 -m pip install -e .
 ```
+
+Windows:
+```sh
+git clone https://github.com/anuraio/anura-sdk-python.git
+cd anura-sdk-python
+py -m pip install -r requirements.txt
+py -m pip install -e .
+```
+
 4. View our [**Quick Examples**](#quick-examples) to immediately begin using the SDK!
 
 ## Quick Examples
