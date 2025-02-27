@@ -4,6 +4,7 @@ import json
 from anura.direct.result import DirectResult
 from anura.direct.exceptions import AnuraException, AnuraClientException, AnuraServerException
 from typing import Awaitable
+from urllib.parse import quote, quote_plus, urlencode
 
 class AnuraDirect:
     """
@@ -11,38 +12,51 @@ class AnuraDirect:
     """
 
     __instance = ''
-    __source = ''
-    __campaign = ''
-    __additional_data = {}
     __use_https = True
+    __api_url = 'https://direct.anura.io/direct.json'
 
     def __init__(self, instance: str, use_https: bool = True):
         self.__instance = instance
         self.__use_https = use_https
+        
+        if (self.__use_https):
+            self.__api_url = 'https://direct.anura.io/direct.json'
+        else:
+            self.__api_url = 'http://direct.anura.io/direct.json'
 
-    def get_result(self, ip_address: str, user_agent: str = '', app: str = '', device: str = '') -> DirectResult:
+    def get_result(
+        self, 
+        ip_address: str,
+        user_agent: str = '', 
+        app: str = '', 
+        device: str = '',
+        source: str = '',
+        campaign: str = '', 
+        additional_data: dict = {}
+    ) -> DirectResult:
         """
         Gets a result from Anura Direct, or raises an exception if an error occurred.
         """
+        
         params = {
             'instance': self.__instance,
             'ip': ip_address
         }
 
-        if (self.__source):
-            params['source'] = self.__source
-        if (self.__campaign):
-            params['campaign'] = self.__campaign
+        if (source):
+            params['source'] = quote(source)
+        if (campaign):
+            params['campaign'] = quote(campaign)
         if (user_agent):
-            params['ua'] = user_agent
+            params['ua'] = quote(user_agent)
         if (app):
-            params['app'] = app
+            params['app'] = quote(app)
         if (device):
-            params['device'] = device
-        if (len(self.__additional_data) > 0):
-            params['additional'] = self.__get_additional_data_string()
+            params['device'] = quote(device)
+        if (len(additional_data) > 0):
+            params['additional'] = self.__get_additional_data_string(additional_data)
 
-        response = requests.get(self.__get_url(), params)
+        response = requests.get(self.__api_url, params)
 
         is_server_error = response.status_code in range(500, 600)
         if is_server_error:
@@ -65,7 +79,17 @@ class AnuraDirect:
 
         return direct_result
 
-    async def get_result_async(self, session: aiohttp.ClientSession, ip_address: str, user_agent: str = '', app: str = '', device: str = '') -> Awaitable[DirectResult]:
+    async def get_result_async(
+        self, 
+        session: aiohttp.ClientSession, 
+        ip_address: str,
+        user_agent: str = '', 
+        app: str = '', 
+        device: str = '',
+        source: str = '',
+        campaign: str = '', 
+        additional_data: dict = {}
+    ) -> Awaitable[DirectResult]:
         """
         Asynchronously gets a result from Anura Direct, or raises an exception if an error occurred.
         """
@@ -75,21 +99,21 @@ class AnuraDirect:
             'ip': ip_address
         }
 
-        if (self.__source):
-            params['source'] = self.__source
-        if (self.__campaign):
-            params['campaign'] = self.__campaign
+        if (source):
+            params['source'] = quote(source)
+        if (campaign):
+            params['campaign'] = quote(campaign)
         if (user_agent):
-            params['ua'] = user_agent
+            params['ua'] = quote(user_agent)
         if (app):
-            params['app'] = app
+            params['app'] = quote(app)
         if (device):
-            params['device'] = device
-        if (len(self.__additional_data) > 0):
-            params['additional'] = self.__get_additional_data_string()
+            params['device'] = quote(device)
+        if (len(additional_data) > 0):
+            params['additional'] = self.__get_additional_data_string(additional_data)
 
         async with session as client:
-            async with client.get(url=self.__get_url(), params=params) as response:
+            async with client.get(url=self.__api_url, params=params) as response:
                 is_server_error = response.status in range(500, 600)
                 if is_server_error:
                     raise AnuraServerException("Anura Server Error: " + response.status)
@@ -114,61 +138,26 @@ class AnuraDirect:
     @property
     def instance(self) -> str:
         return self.__instance
-    
+
     @instance.setter
     def instance(self, instance: str) -> None:
         self.__instance = instance
 
     @property
-    def source(self) -> str:
-        return self.__source
-    
-    @source.setter
-    def source(self, source: str) -> None:
-        self.__source = source
+    def use_https(self) -> bool:
+        return self.__use_https
 
-    @property
-    def campaign(self) -> str:
-        return self.__campaign
-    
-    @campaign.setter
-    def campaign(self, campaign: str) -> None:
-        self.__campaign = campaign
-
-    @property
-    def additional_data(self) -> dict:
-        return self.__additional_data
-
-    @additional_data.setter
-    def additional_data(self, additional_data: dict) -> None:
-        self.__additional_data = additional_data
-    
-    def add_additional_data(self, key: str, value: str) -> None:
-        """
-        Adds a key/value pair to your additional data. If you call 
-        this method providing the same key multiple times, the element 
-        at that index will be updated with your new value.
-        """
-
-        self.__additional_data[key] = value
-
-    def remove_additional_data(self, key: str) -> None:
-        """
-        Removes a key/value pair from Anura Direct's additional data.
-        """
-
-        if key in self.__additional_data:
-            del self.__additional_data[key]
-
-    def __get_url(self) -> str:
+    @use_https.setter
+    def use_https(self, use_https: bool) -> None:
+        self.__use_https = use_https
         if (self.__use_https):
-            return 'https://direct.anura.io/direct.json'
+            self.__api_url = 'https://direct.anura.io/direct.json'
         else:
-            return 'http://direct.anura.io/direct.json'
+            self.__api_url = 'http://direct.anura.io/direct.json'
         
-    def __get_additional_data_string(self) -> str:
-        if (len(self.__additional_data) <= 0):
+    def __get_additional_data_string(self, additional_data: dict) -> str:
+        if (len(additional_data) <= 0):
             return ''
         
-        additional_data_string = json.dumps(self.__additional_data)
+        additional_data_string = json.dumps(additional_data)
         return additional_data_string
