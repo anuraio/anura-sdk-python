@@ -36,7 +36,7 @@ from anura.direct.client import AnuraDirect
 
 direct = AnuraDirect('your-instance-id-goes-here')
 ```
-### Create additionla data for Anura Direct
+### Create additional data for Anura Direct
 For sending additional data, you can use a `dict`. We'll use this `additional_data` when we fetch a result:
 ```python
 additional_data = {}
