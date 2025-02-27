@@ -83,7 +83,7 @@ try:
         # Perform some logic only for web crawlers
         print('Visitor is a web crawler.')
 
-    print('result: ' + result)
+    print('result: ' + str(result))
 
 except Exception as e:
     print(e)
@@ -127,7 +127,7 @@ async def main():
                 # Perform some logic only for web crawlers
                 print('Visitor is a web crawler.')
 
-            print('result: ' + result)
+            print('result: ' + str(result))
         except Exception as e:
             print(e)
 
