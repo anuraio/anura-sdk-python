@@ -36,7 +36,7 @@ from anura.direct.client import AnuraDirect
 
 direct = AnuraDirect('your-instance-id-goes-here')
 ```
-### Creating additional data for Anura Direct
+### Create additionla data for Anura Direct
 For sending additional data, you can use a `dict`. We'll use this `additional_data` when we fetch a result:
 ```python
 additional_data = {}
@@ -65,7 +65,26 @@ try:
         additional_data=additional_data     # optional
 
     )
-    print('result: ' + str(result))
+
+    if (result.is_suspect()):
+        # Perform some logic only for suspect visitors
+        print('Visitor is suspect.')
+
+    if (result.is_non_suspect()):
+        # Perform some logic only for non-suspect visitors
+        print('Visitor is non-suspect.')
+
+    if (result.is_mobile()):
+        # Perform some logic only for visitors from mobile devices
+        print('Visitor is using a mobile device.')
+
+    is_web_crawler = (result.rule_sets is not None and "WC" in result.rule_sets)
+    if (is_web_crawler):
+        # Perform some logic only for web crawlers
+        print('Visitor is a web crawler.')
+
+    print('result: ' + result)
+
 except Exception as e:
     print(e)
 ```
@@ -90,7 +109,25 @@ async def main():
                 campaign='your-campaign-value',     # optional
                 additional_data=additional_data     # optional
             )
-            print('result: ' + str(result))
+
+            if (result.is_suspect()):
+                # Perform some logic only for suspect visitors
+                print('Visitor is suspect.')
+
+            if (result.is_non_suspect()):
+                # Perform some logic only for non-suspect visitors
+                print('Visitor is non-suspect.')
+
+            if (result.is_mobile()):
+                # Perform some logic only for visitors from mobile devices
+                print('Visitor is using a mobile device.')
+
+            is_web_crawler = (result.rule_sets is not None and "WC" in result.rule_sets)
+            if (is_web_crawler):
+                # Perform some logic only for web crawlers
+                print('Visitor is a web crawler.')
+
+            print('result: ' + result)
         except Exception as e:
             print(e)
 
@@ -145,7 +182,7 @@ Parameters:
 **`@property use_https(self) -> bool`**
 - Returns whether or you're currently using **HTTPS** when calling the Anura Direct API. If false, you are using **HTTP** instead.
 
-**`use_https.setter use_https(self, use_https: bool) -> None`**
+**`@use_https.setter use_https(self, use_https: bool) -> None`**
 - Sets whether to use **HTTPS** or **HTTP** according to the `use_https` value passed.
 
 ### DirectResult
