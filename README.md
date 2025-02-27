@@ -36,35 +36,34 @@ from anura.direct.client import AnuraDirect
 
 direct = AnuraDirect('your-instance-id-goes-here')
 ```
-### Set a custom source, campaign, and additional data for Anura Direct
+### Creating additional data for Anura Direct
+For sending additional data, you can use a `dict`. We'll use this `additional_data` when we fetch a result:
 ```python
-direct.source = 'your-source-value'
-direct.campaign = 'your-campaign-value'
-direct.add_additional_data('1', 'your-data-value')
-```
+additional_data = {}
+index = 1
 
-### Updating additional data at a specific index
-```python
-# To update an element of additional data at a specific index,
-# simply add the element again but with a new value.
-index_to_update = '1'
-direct.add_additional_data(index_to_update, 'your-new-data-value')
-```
+# adding element
+additional_data[index] = 'your-data-value'
 
-### Removing an element from additional data
-```python
-index_to_remove = '1'
-direct.remove_additional_data(index_to_remove)
+# updating an element (adding the element again, but with a new value)
+additional_data[index] = 'your-new-data-value'
+
+# removing an element
+del additional_data[index]
 ```
 
 ### Get a result from Anura Direct
 ```python
 try:
     result = direct.get_result(
-        'visitors-ip-address', # required
-        'visitors-user-agent', # optional
-        'visitors-app-package-id', # optional
-        'visitors-device-id' # optional
+        ip_address='visitors-ip-address',   # required
+        user_agent='visitors-user-agent',   # optional
+        app='visitors-app-package-id',      # optional
+        device='visitors-device-id',        # optional
+        source='your-source-value',         # optional
+        campaign='your-campaign-value',     # optional
+        additional_data=additional_data     # optional
+
     )
     print('result: ' + str(result))
 except Exception as e:
@@ -82,11 +81,14 @@ async def main():
     async with aiohttp.ClientSession() as session:
         try:
             result = await direct.get_result_async(
-                session, # required
-                'visitors-ip-address', # required
-                'visitors-user-agent', # optional
-                'visitors-app-package-id', # optional
-                'visitors-device-id' # optional
+                session=session,                    # required
+                ip_address='visitors-ip-address',   # required
+                user_agent='visitors-user-agent',   # optional
+                app='visitors-app-package-id',      # optional
+                device='visitors-device-id',        # optional
+                source='your-source-value',         # optional
+                campaign='your-campaign-value',     # optional
+                additional_data=additional_data     # optional
             )
             print('result: ' + str(result))
         except Exception as e:
@@ -113,7 +115,9 @@ Parameters:
 | `user_agent` | `str` | The user agent string of your visitor | |
 | `app` | `str` | The application package identifier of your visitor (when available.) | |
 | `device` | `str` | The device identifier of your visitor (when available.) | |
-
+| `source` | `str` | A variable, declared by you, to identify "source" traffic within Anura's dashboard interface. | |
+| `campaign` | `str` | A subset variable of "source", declared by you, to identify "campaign" traffic within Anura's dashboard interface. | |
+| `additional_data` | `dict` | Additional Data gives you the ability to pass in select points of data with your direct requests, essentially turning Anura into "your database for transactional data." | |
 
 **`get_result_async() -> Awaitable[DirectResult]`**
 - Gets a result asynchronously from Anura Direct. Raises an exception if an error occurs throughout the result fetching process.
@@ -128,36 +132,21 @@ Parameters:
 | `user_agent` | `str` | The user agent string of your visitor | |
 | `app` | `str` | The application package identifier of your visitor (when available.) | |
 | `device` | `str` | The device identifier of your visitor (when available.) | |
-
-**`add_additional_data(self, key: str, value: str) -> None`**
-- Adds an element of additional data to your `AnuraDirect` client.
-
-**`remove_additional_data(self, key: str) -> None`**
-- Removes the element of your additional data array located at the provided `key`.
+| `source` | `str` | A variable, declared by you, to identify "source" traffic within Anura's dashboard interface. | |
+| `campaign` | `str` | A subset variable of "source", declared by you, to identify "campaign" traffic within Anura's dashboard interface. | |
+| `additional_data` | `dict` | Additional Data gives you the ability to pass in select points of data with your direct requests, essentially turning Anura into "your database for transactional data." | |
 
 **`@property instance(self) -> str`**
 - Returns the instance you have set within the `AnuraDirect` client.
 
-**`@property source(self) -> str`**
-- Returns the source you have set within the `AnuraDirect` client.
-
-**`@property campaign(self) -> str`**
-- Returns the campaign you have set within the `AnuraDirect` client.
-
-**`@property additional_data(self) -> dict`**
-- Returns the additional data you have set within the `AnuraDirect` client.
-
 **`@instance.setter instance(self, instance: str) -> None`**
 - Sets the Instance ID of the `AnuraDirect` client to the `instance` value passed.
 
-**`@source.setter source(self, source: str) -> None`**
-- Sets the source of the `AnuraDirect` client to the `source` value passed.
+**`@property use_https(self) -> bool`**
+- Returns whether or you're currently using **HTTPS** when calling the Anura Direct API. If false, you are using **HTTP** instead.
 
-**`@campaign.setter campaign(self, campaign: str) -> None`**
-- Sets the campaign of the `AnuraDirect` client to the `campaign` value passed.
-
-**`@additional_data.setter additional_data(self, additional_data: dict) -> None`**
-- Sets the additional data of the `AnuraDirect` client to the `additional_data` value passed.
+**`use_https.setter use_https(self, use_https: bool) -> None`**
+- Sets whether to use **HTTPS** or **HTTP** according to the `use_https` value passed.
 
 ### DirectResult
 The result upon a successful call to `get_result()` or `get_result_async()` from the `AnuraDirect` client. It contains not only the result from Anura Direct, but some other methods to help you use the result as well.
@@ -176,7 +165,7 @@ The result upon a successful call to `get_result()` or `get_result_async()` from
 **`result: str`**
 - Besides using the `is_suspect()` or `is_non_suspect()` methods, you are also able to directly access the result value.
 
-**`rule_sets: str[] | None`**
+**`rule_sets: list[str] | None`**
 - If you have **return rule sets** enabled, you will be able to see which specific rules were violated upon a **suspect** result. This value will be `None` if the visitor is **non-suspect**, or if you do not have **return rule sets** enabled.
 - You can talk to [support](mailto:support@anura.io) about enabling or disabling the **return rule sets** feature.
 
