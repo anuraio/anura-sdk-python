@@ -8,7 +8,7 @@ class DirectResult:
     rule_sets = []
     invalid_traffic_type = ''
 
-    def __init__(self, result: str, mobile:int|None = None, rule_sets = None, invalid_traffic_type = None):
+    def __init__(self, result: str, mobile: int|None = None, rule_sets: list[str]|None = None, invalid_traffic_type: list[str]|None = None):
         self.result = result
         self.mobile = mobile
         self.rule_sets = rule_sets
