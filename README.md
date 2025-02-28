@@ -202,6 +202,9 @@ The result upon a successful call to `get_result()` or `get_result_async()` from
 **`result: str`**
 - Besides using the `is_suspect()` or `is_non_suspect()` methods, you are also able to directly access the result value.
 
+**`mobile: int | None`**
+- Besides using the `is_mobile()` method, you are also able to directly access the mobile value.
+
 **`rule_sets: list[str] | None`**
 - If you have **return rule sets** enabled, you will be able to see which specific rules were violated upon a **suspect** result. This value will be `None` if the visitor is **non-suspect**, or if you do not have **return rule sets** enabled.
 - You can talk to [support](mailto:support@anura.io) about enabling or disabling the **return rule sets** feature.
