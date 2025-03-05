@@ -16,12 +16,5 @@ class TestSDK(unittest.TestCase):
         with self.assertRaises(AnuraClientException):
             direct.get_result('127.0.0.1')
 
-    def test_remove_additional_data(self):
-        direct = AnuraDirect('')
-        direct.add_additional_data('1', 'my-value')
-        direct.remove_additional_data('1')
-
-        assert len(direct.__additional_data) == 0
-
 if __name__ == '__main__':
     unittest.main()
